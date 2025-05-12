@@ -1,0 +1,510 @@
+1. Smart Warehouse Management System
+Concepts: Generic Classes, Bounded Type Parameters, Wildcards
+Problem Statement:
+You are developing a Smart Warehouse System that manages different types of items like Electronics, Groceries, and Furniture. The system should be able to store and retrieve items dynamically while maintaining type safety.
+Hints:
+Create an abstract class WarehouseItem that all items extend (Electronics, Groceries, Furniture).
+Implement a generic class Storage<T extends WarehouseItem> to store items safely.
+Implement a wildcard method to display all items in storage regardless of their type (List<? extends WarehouseItem>).
+(List<? extends WarehouseItem>).
+package Bridgelabz.Generics;
+
+import java.util.ArrayList;
+import java.util.List;
+
+abstract class WarehouseItem {
+    private String name;
+
+    public WarehouseItem(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+}
+
+class Electronics extends WarehouseItem {
+    public Electronics(String name) {
+        super(name);
+    }
+}
+
+class Groceries extends WarehouseItem {
+    public Groceries(String name) {
+        super(name);
+    }
+}
+
+class Furniture extends WarehouseItem {
+    public Furniture(String name) {
+        super(name);
+    }
+}
+
+class Storage<T extends WarehouseItem> {
+    private List<T> items = new ArrayList<>();
+
+    public void addItem(T item) {
+        items.add(item);
+    }
+
+    public List<T> getItems() {
+        return items;
+    }
+
+    public static void displayItems(List<? extends WarehouseItem> items) {
+        for (WarehouseItem item : items) {
+            System.out.println(item.getName());
+        }
+    }
+}
+
+public class Waste {
+    public static void main(String[] args) {
+        Storage<Electronics> electronicsStorage = new Storage<>();
+        electronicsStorage.addItem(new Electronics("Laptop"));
+        electronicsStorage.addItem(new Electronics("Smartphone"));
+
+        Storage<Groceries> groceriesStorage = new Storage<>();
+        groceriesStorage.addItem(new Groceries("Apple"));
+        groceriesStorage.addItem(new Groceries("Milk"));
+
+        Storage<Furniture> furnitureStorage = new Storage<>();
+        furnitureStorage.addItem(new Furniture("Chair"));
+        furnitureStorage.addItem(new Furniture("Table"));
+
+        System.out.println("Electronics:");
+        Storage.displayItems(electronicsStorage.getItems());
+
+        System.out.println("\nGroceries:");
+        Storage.displayItems(groceriesStorage.getItems());
+
+        System.out.println("\nFurniture:");
+        Storage.displayItems(furnitureStorage.getItems());
+    }
+}
+
+
+
+
+2. Dynamic Online Marketplace
+Concepts: Type Parameters, Generic Methods, Bounded Type Parameters
+Problem Statement:
+Build a generic product catalog for an online marketplace that supports various product types like Books, Clothing, and Gadgets. Each product type has a specific price range and category.
+Hints:
+Define a generic class Product<T> where T is restricted to a category (BookCategory, ClothingCategory, etc.).
+Implement a generic method to apply discounts dynamically (<T extends Product> void applyDiscount(T product, double percentage)).
+Ensure type safety while allowing multiple product categories to exist in the same catalog.
+catalog.
+package Bridgelabz.Generics;
+
+import java.util.ArrayList;
+import java.util.List;
+
+abstract class ProductCategory {
+    private String categoryName;
+
+    public ProductCategory(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+}
+
+class BookCategory extends ProductCategory {
+    public BookCategory() {
+        super("Books");
+    }
+}
+
+class ClothingCategory extends ProductCategory {
+    public ClothingCategory() {
+        super("Clothing");
+    }
+}
+
+class GadgetCategory extends ProductCategory {
+    public GadgetCategory() {
+        super("Gadgets");
+    }
+}
+
+class Product<T extends ProductCategory> {
+    private String name;
+    private double price;
+    private T category;
+
+    public Product(String name, double price, T category) {
+        this.name = name;
+        this.price = price;
+        this.category = category;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public T getCategory() {
+        return category;
+    }
+}
+
+class Catalog {
+    private List<Product<? extends ProductCategory>> products = new ArrayList<>();
+
+    public void addProduct(Product<? extends ProductCategory> product) {
+        products.add(product);
+    }
+
+    public List<Product<? extends ProductCategory>> getProducts() {
+        return products;
+    }
+
+    public static <T extends Product<?>> void applyDiscount(T product, double percentage) {
+        double discountedPrice = product.getPrice() - (product.getPrice() * (percentage / 100));
+        product.setPrice(discountedPrice);
+    }
+}
+
+public class MarketPlace {
+    public static void main(String[] args) {
+        Catalog catalog = new Catalog();
+
+        Product<BookCategory> book = new Product<>("The Great Gatsby", 500, new BookCategory());
+        Product<ClothingCategory> clothing = new Product<>("T-Shirt", 300, new ClothingCategory());
+        Product<GadgetCategory> gadget = new Product<>("Smartphone", 15000, new GadgetCategory());
+
+        catalog.addProduct(book);
+        catalog.addProduct(clothing);
+        catalog.addProduct(gadget);
+
+        System.out.println("Before Discount:");
+        for (Product<? extends ProductCategory> product : catalog.getProducts()) {
+            System.out.println(product.getName() + " (" + product.getCategory().getCategoryName() + "): ₹" + product.getPrice());
+        }
+
+        Catalog.applyDiscount(book, 10);
+        Catalog.applyDiscount(clothing, 20);
+        Catalog.applyDiscount(gadget, 15);
+
+        System.out.println("\nAfter Discount:");
+        for (Product<? extends ProductCategory> product : catalog.getProducts()) {
+            System.out.println(product.getName() + " (" + product.getCategory().getCategoryName() + "): ₹" + product.getPrice());
+        }
+    }
+}
+
+
+
+
+
+3. Multi-Level University Course Management System
+Concepts: Generic Classes, Wildcards, Bounded Type Parameters
+Problem Statement:
+Develop a university course management system where different departments offer courses with different evaluation types (e.g., Exam-Based, Assignment-Based, Research-Based).
+Hints:
+Create an abstract class CourseType (e.g., ExamCourse, AssignmentCourse, ResearchCourse).
+Implement a generic class Course<T extends CourseType> to manage different courses.
+Use wildcards (List<? extends CourseType>) to handle any type of course dynamically.
+
+
+package Bridgelabz.Generics;
+
+import java.util.ArrayList;
+import java.util.List;
+
+abstract class CourseType {
+    private String courseName;
+
+    public CourseType(String courseName) {
+        this.courseName = courseName;
+    }
+
+    public String getCourseName() {
+        return courseName;
+    }
+}
+
+class ExamCourse extends CourseType {
+    public ExamCourse(String courseName) {
+        super(courseName);
+    }
+}
+
+class AssignmentCourse extends CourseType {
+    public AssignmentCourse(String courseName) {
+        super(courseName);
+    }
+}
+
+class ResearchCourse extends CourseType {
+    public ResearchCourse(String courseName) {
+        super(courseName);
+    }
+}
+
+class Course<T extends CourseType> {
+    private T courseType;
+
+    public Course(T courseType) {
+        this.courseType = courseType;
+    }
+
+    public T getCourseType() {
+        return courseType;
+    }
+}
+
+class Department {
+    private List<Course<? extends CourseType>> courses = new ArrayList<>();
+
+    public void addCourse(Course<? extends CourseType> course) {
+        courses.add(course);
+    }
+
+    public List<Course<? extends CourseType>> getCourses() {
+        return courses;
+    }
+
+    public static void displayCourses(List<? extends CourseType> courses) {
+        for (CourseType course : courses) {
+            System.out.println(course.getCourseName());
+        }
+    }
+}
+
+public class University {
+    public static void main(String[] args) {
+        Department department = new Department();
+
+        Course<ExamCourse> mathCourse = new Course<>(new ExamCourse("Mathematics"));
+        Course<AssignmentCourse> programmingCourse = new Course<>(new AssignmentCourse("Programming"));
+        Course<ResearchCourse> aiCourse = new Course<>(new ResearchCourse("Artificial Intelligence"));
+
+        department.addCourse(mathCourse);
+        department.addCourse(programmingCourse);
+        department.addCourse(aiCourse);
+
+        System.out.println("Courses Offered:");
+        for (Course<? extends CourseType> course : department.getCourses()) {
+            System.out.println(course.getCourseType().getCourseName());
+        }
+    }
+}
+
+
+	
+
+4. Personalized Meal Plan Generator
+Concepts: Generic Methods, Type Parameters, Bounded Type Parameters
+Problem Statement:
+Design a Personalized Meal Plan Generator where users can choose different meal categories like Vegetarian, Vegan, Keto, or High-Protein. The system should ensure only valid meal plans are generated.
+Hints:
+Define an interface MealPlan with subtypes (VegetarianMeal, VeganMeal, etc.).
+Implement a generic class Meal<T extends MealPlan> to handle different meal plans.
+Use a generic method to validate and generate a personalized meal plan dynamically.
+
+
+package Bridgelabz.Generics;
+
+interface MealPlan {
+    String getMealType();
+}
+
+class VegetarianMeal implements MealPlan {
+    @Override
+    public String getMealType() {
+        return "Vegetarian Meal";
+    }
+}
+
+class VeganMeal implements MealPlan {
+    @Override
+    public String getMealType() {
+        return "Vegan Meal";
+    }
+}
+
+class KetoMeal implements MealPlan {
+    @Override
+    public String getMealType() {
+        return "Keto Meal";
+    }
+}
+
+class HighProteinMeal implements MealPlan {
+    @Override
+    public String getMealType() {
+        return "High-Protein Meal";
+    }
+}
+
+class Meal<T extends MealPlan> {
+    private T mealPlan;
+
+    public Meal(T mealPlan) {
+        this.mealPlan = mealPlan;
+    }
+
+    public T getMealPlan() {
+        return mealPlan;
+    }
+}
+
+class MealPlanGenerator {
+    public static <T extends MealPlan> Meal<T> generateMealPlan(T mealPlan) {
+        return new Meal<>(mealPlan);
+    }
+
+    public static <T extends MealPlan> boolean validateMealPlan(T mealPlan) {
+        return mealPlan != null;
+    }
+}
+
+public class Meal {
+    public static void main(String[] args) {
+        VegetarianMeal vegetarianMeal = new VegetarianMeal();
+        VeganMeal veganMeal = new VeganMeal();
+        KetoMeal ketoMeal = new KetoMeal();
+        HighProteinMeal highProteinMeal = new HighProteinMeal();
+
+        if (MealPlanGenerator.validateMealPlan(vegetarianMeal)) {
+            Meal<VegetarianMeal> meal = MealPlanGenerator.generateMealPlan(vegetarianMeal);
+            System.out.println("Generated: " + meal.getMealPlan().getMealType());
+        }
+
+        if (MealPlanGenerator.validateMealPlan(veganMeal)) {
+            Meal<VeganMeal> meal = MealPlanGenerator.generateMealPlan(veganMeal);
+            System.out.println("Generated: " + meal.getMealPlan().getMealType());
+        }
+
+        if (MealPlanGenerator.validateMealPlan(ketoMeal)) {
+            Meal<KetoMeal> meal = MealPlanGenerator.generateMealPlan(ketoMeal);
+            System.out.println("Generated: " + meal.getMealPlan().getMealType());
+        }
+
+        if (MealPlanGenerator.validateMealPlan(highProteinMeal)) {
+            Meal<HighProteinMeal> meal = MealPlanGenerator.generateMealPlan(highProteinMeal);
+            System.out.println("Generated: " + meal.getMealPlan().getMealType());
+        }
+    }
+}
+
+
+
+
+
+
+
+5. AI-Driven Resume Screening System
+Concepts: Generic Classes, Generic Methods, Bounded Type Parameters, Wildcards
+Problem Statement:
+Develop an AI-Driven Resume Screening System that can process resumes for different job roles like Software Engineer, Data Scientist, and Product Manager while ensuring type safety.
+Hints:
+Create an abstract class JobRole (SoftwareEngineer, DataScientist, ProductManager).
+Implement a generic class Resume<T extends JobRole> to process resumes dynamically.
+Use a wildcard method (List<? extends JobRole>) to handle multiple job roles in the screening pipeline.
+
+
+package Bridgelabz.Generics;
+
+import java.util.ArrayList;
+import java.util.List;
+
+abstract class JobRole {
+    private String roleName;
+
+    public JobRole(String roleName) {
+        this.roleName = roleName;
+    }
+
+    public String getRoleName() {
+        return roleName;
+    }
+}
+
+class SoftwareEngineer extends JobRole {
+    public SoftwareEngineer() {
+        super("Software Engineer");
+    }
+}
+
+class DataScientist extends JobRole {
+    public DataScientist() {
+        super("Data Scientist");
+    }
+}
+
+class ProductManager extends JobRole {
+    public ProductManager() {
+        super("Product Manager");
+    }
+}
+
+class Resume<T extends JobRole> {
+    private String candidateName;
+    private T jobRole;
+
+    public Resume(String candidateName, T jobRole) {
+        this.candidateName = candidateName;
+        this.jobRole = jobRole;
+    }
+
+    public String getCandidateName() {
+        return candidateName;
+    }
+
+    public T getJobRole() {
+        return jobRole;
+    }
+}
+
+class ResumeScreeningSystem {
+    private List<Resume<? extends JobRole>> resumes = new ArrayList<>();
+
+    public void addResume(Resume<? extends JobRole> resume) {
+        resumes.add(resume);
+    }
+
+    public List<Resume<? extends JobRole>> getResumes() {
+        return resumes;
+    }
+
+    public static void displayResumes(List<? extends JobRole> jobRoles) {
+        for (JobRole role : jobRoles) {
+            System.out.println("Processing resumes for: " + role.getRoleName());
+        }
+    }
+}
+
+public class Resume {
+    public static void main(String[] args) {
+        ResumeScreeningSystem system = new ResumeScreeningSystem();
+
+        Resume<SoftwareEngineer> seResume = new Resume<>("Alice", new SoftwareEngineer());
+        Resume<DataScientist> dsResume = new Resume<>("Bob", new DataScientist());
+        Resume<ProductManager> pmResume = new Resume<>("Charlie", new ProductManager());
+
+        system.addResume(seResume);
+        system.addResume(dsResume);
+        system.addResume(pmResume);
+
+        System.out.println("Resumes in the system:");
+        for (Resume<? extends JobRole> resume : system.getResumes()) {
+            System.out.println(resume.getCandidateName() + " applied for " + resume.getJobRole().getRoleName());
+        }
+    }
+}
+
+
